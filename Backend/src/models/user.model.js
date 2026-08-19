@@ -18,27 +18,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Password is required"],
         minlength: [6, "more than 6 characters required"],
-        select: fasle //whenever a query will be made this password will not be selected and send in the data unless it is explicitly mentioned
+        select: false //whenever a query will be made this password will not be selected and send in the data unless it is explicitly mentioned
     }
 }, {
     //sends the user data when it was created and updated
-    timestamps: true
+    timestamps: true  
 })
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
     if (!this.isModified("password")) {
         return
     }
 
     const hash = await bcrypt.hash(this.password, 10)
     this.password = hash
-    return next()
+    return 
 })
-
 
 userSchema.methods.comparePassword =async function(password){
     return await bcrypt.compare(password,this.password)
 }
+
 const userModel = mongoose.model("user", userSchema)
 
 export default userModel
